@@ -69,21 +69,19 @@ public class Photocation extends java.awt.Frame {
 
         for ( int i = 0; i <= 4; i++ ) {
             c.gridy = i;
+
             c.ipadx = 15;
             c.ipady = 15;
-
-
             c.gridx = 1;
             descrFields[i] = new DescriptionPoint( i + 1 );
             add( descrFields[i], c );
+
             c.ipadx = 0;
             c.ipady = 0;
-
             c.gridx = 2;
             coordinateFields[i] = new javax.swing.JTextField();
             coordinateFields[i].setMaximumSize( new Dimension( 200, 20 ) );
             coordinateFields[i].setPreferredSize( new Dimension( 200, 20 ) );
-
             add( coordinateFields[i], c );
         }
 
@@ -174,7 +172,8 @@ public class Photocation extends java.awt.Frame {
      * @param args the command line arguments
      */
     public static void main( String args[] ) {
-        new Photocation().show();
+//       new Photocation().show();
+       ConicRoute.sectionTest();
     }
 
     private javax.swing.JButton exitButton;
