@@ -1,4 +1,4 @@
-
+import mfc.polynomial.ComplexPolynomial;
 import mfc.field.Complex;
 
 /*
@@ -54,6 +54,48 @@ public class ComplexMatrix {
         }
     }
 
+    /**
+     * Liefert ein Polynom der Funktion det( this + b*x ) zurück
+     * @param b
+     * @return
+     */
+
+    public ComplexPolynomial getDetPolynom( ComplexMatrix b ) {
+        if ( dim != 3 || b.dim != 3 ) return new ComplexPolynomial();
+        ComplexPolynomial pMatrix[][];
+        pMatrix = new ComplexPolynomial[3][3];
+        for ( int i = 0; i < dim; i++ ) {
+            for ( int j = 0; j < dim; j++ ) {
+                Complex coef[] = new Complex[2];
+                coef[0] = d[i][j];
+                coef[1] = b.d[i][j];
+                pMatrix[i][j] = new ComplexPolynomial( coef );
+            }
+        }
+        ComplexPolynomial det = new ComplexPolynomial();
+        det = pMatrix[0][0].times( pMatrix[1][1] ).times( pMatrix[2][2] ).plus(
+                pMatrix[0][1].times( pMatrix[1][2] ).times( pMatrix[2][0] ).plus(
+                        pMatrix[0][2].times( pMatrix[1][0] ).times( pMatrix[2][1] ).minus(
+                                pMatrix[2][2].times( pMatrix[1][1] ).times( pMatrix[0][0] ).minus(
+                                        pMatrix[2][1].times( pMatrix[1][2] ).times( pMatrix[0][0] ).minus(
+                                                pMatrix[2][2].times( pMatrix[1][0] ).times( pMatrix[0][1] )
+                                        )
+                                )
+                        )
+                )
+        );
+        return det;
+    }
+
+
+    /**
+     * Liefert die Nullstellen der Funktion det( this + b*x )
+     * @param b
+     * @return
+     */
+    public Complex[] detIsZero( ComplexMatrix b ) {
+        return getDetPolynom( b ).getRoots();
+    }
 
     /**
      * Berechnet p^T * M * p mit M \in M^{3x3} und p \in V^3
