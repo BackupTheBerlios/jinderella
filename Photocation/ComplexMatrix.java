@@ -17,6 +17,13 @@ public class ComplexMatrix {
         this( 3 );
     }
 
+    public ComplexMatrix( ComplexMatrix A ) {
+        for ( int i = 0; i < dim; i++ ) {
+            for ( int j = 0; j < dim; j++ ) {
+                d[i][j] = new Complex( A.d[i][j] );
+            }
+        }
+    }
 
     /**
      * Constructor.
@@ -52,6 +59,16 @@ public class ComplexMatrix {
         for ( int i = 0; i < dim; i++ ) {
             for ( int j = i; j < dim; j++ ) {
                 d[j][i] = d[i][j] = d[i][j].plus( d[j][i] );
+            }
+        }
+    }
+
+
+    public void swap( int col, int row ) {
+        ComplexMatrix tmp = new ComplexMatrix(this);
+        for ( int i = 0; i < dim; i++ ) {
+            for ( int j = 0; j < dim; j++ ) {
+                d[i][i] = tmp.d[ dim - (i+col)%dim ][ dim - (j+row)%dim ];
             }
         }
     }
@@ -268,5 +285,7 @@ public class ComplexMatrix {
         }
         return C;
     }
+
+
 
 }

@@ -104,4 +104,13 @@ public class ComplexVector {
         return result;
     }
 
+    public Complex norm() {
+        Complex result = new Complex(0);
+        for ( int i = 0; i < dim; i++ ) {
+            result.assignPlus( d[i].sqr() );
+        }
+        return result.sqrt();
+    }
+
+
 }

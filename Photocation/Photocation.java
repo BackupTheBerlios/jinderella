@@ -142,7 +142,7 @@ public class Photocation extends java.awt.Frame {
                     return true;
                 }
                 String filename = f.getName().toLowerCase();
-                return filename.endsWith( ".jpg" );
+                return ( filename.endsWith( ".jpg" ) || filename.endsWith( ".jpeg" ) );
             }
 
             public String getDescription() {

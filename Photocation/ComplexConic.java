@@ -117,7 +117,107 @@ public class ComplexConic {
         c = conicMatrix.d[0][1].times( 2 );
         d = conicMatrix.d[0][2].times( 2 );
         e = conicMatrix.d[1][2].times( 2 );
-        return null;
+
+        Complex xx = a;
+        Complex xy = c;
+        Complex xz = d;
+        Complex yy = b;
+        Complex yz = e;
+        Complex zz = f;
+
+
+        // Berechnung der bestimmenden Geraden
+        // -----------------------------------
+        if ( a.isZero() && b.isZero() && f.isZero() ) {
+
+            // Kurve degeneriert mit der Form A*x*y + B*y + C*x = 0  ->  (r1*x+q1) * (r2*y+q2)
+            Complex A = c;
+            Complex B = e;
+            Complex C = d;
+
+            if ( B.isZero() ) {
+                // Kurve: A*x*y + C*x = 0 => x*(A*y + C)
+                result[0] = new ComplexVector( new Complex(1), new Complex(0), new Complex(0) );
+                result[1] = new ComplexVector( new Complex(0), A, C );
+            } else {
+                // Kurve: A*x*y + B*y = 0 => y*(A*x + B)
+                result[0] = new ComplexVector( A, new Complex(0), B );
+                result[1] = new ComplexVector( new Complex(0), new Complex(1), new Complex(0) );
+            }
+            return result;
+        }
+
+        // Suche Ansatzpunkt auf der Diagonale
+        int iSpalte = 0;
+        if ( !a.isZero() )
+            iSpalte = 0;
+        else if ( !b.isZero() )
+            iSpalte = 1;
+        else
+            iSpalte = 2;
+
+        ComplexMatrix N;
+        N = new ComplexMatrix( conicMatrix );
+
+        if ( iSpalte == 0 ) {
+            // Matrix ist in Ordnung
+
+        } else if ( iSpalte == 1 ) {
+            // Vertausche x und y in N
+            N.swap(1,1);
+        } else if ( iSpalte == 2 ) {
+            // Vertausche x und z in N
+            N.swap(2,2);
+        }
+        N.makeSymmetric();
+
+
+        N= N.times( new Complex(1).divide(a) );
+        // Bilde Gleichungsform x^2 + A*xy + B*x + C*y^2 + D*y + E (beachte evtl. obige Vertauschungen)
+        //      |  a  c' d' |
+        //  m = |  c' b  e' |
+        //      |  d' e' f  |
+        Complex A = c;
+        Complex B = d;
+        Complex C = b;
+        Complex D = e;
+        Complex E = f;
+
+        Complex DetA = A.sqr().divide( new Complex(4) ).minus( C );
+        Complex DetB = B.sqr().divide( new Complex(4) ).minus( E );
+
+
+        Complex q1, r1;         // Erste  Gerade der Form x + q1*y + r1
+        Complex q2, r2;         // Zweite Gerade der Form x + q2*y + r1
+
+        // 2-Möglichkeiten, je nach Wert der Determinante unter der Wurzel
+        if ( !DetA.isZero() ) {
+            // Nur ein Wert interessiert
+            q1 = A.divide( new Complex(2) ).plus( DetA.sqrt() );
+            q2 = A.minus( q1 );
+
+            r1 = D.minus( B.times(q1) ).divide( q1.minus(q2) ).neg();
+            r2 = B.times( q2 ).minus( D ).divide( q1.minus(q2) ).neg();
+        } else {
+            // Nur ein Wert interessiert
+            r1 = B.divide( new Complex(2) ).plus( DetB.sqrt() );
+            r2 = B.minus( r1 );
+
+            q1 = D.minus( A.times(r1) ).divide( r1.minus(r2) ).neg();
+            q2 = A.times( r2 ).minus( D ).divide( r1.minus(r2) ).neg();
+        }
+
+        if ( iSpalte == 0 ) {
+            result[0] = new ComplexVector( new Complex(1), q1, r1 );
+            result[1] = new ComplexVector( new Complex(1), q2, r2 );
+        } else if ( iSpalte == 1 ) {
+            result[0] = new ComplexVector( q1, new Complex(1), r1 );
+            result[1] = new ComplexVector( q2, new Complex(1), r2 );
+        } else {
+            result[0] = new ComplexVector( r1, q1, new Complex(1) );
+            result[1] = new ComplexVector( r2, q2, new Complex(1) );
+        }
+        return result;
     }
 
     /**

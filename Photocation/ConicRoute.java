@@ -139,7 +139,7 @@ public class ConicRoute {
         ComplexVector x[] = cConic.intersect( cConic2 );
         if ( x != null )
             for ( int i = 0 ; i < x.length ; i ++ ) {
-                System.out.println( i+":"+x[i] );
+                System.out.println( i+":"+x[i].toCanvas() );
             }
 
     }
