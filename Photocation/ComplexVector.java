@@ -64,6 +64,17 @@ public class ComplexVector {
         );
     }
 
+    public ComplexVector times( ComplexMatrix A ) {
+        ComplexVector res = new ComplexVector( dim );
+        for ( int i = 0 ; i <= dim ; i++ ) {
+            for ( int j = 0 ; i <= dim ; i++ ) {
+
+            }
+       }
+        return res;
+    }
+
+
     /**
      * Projeziert ein Vektor mit Homogenen Koordinaten
      * @return ComplexVector

@@ -8,6 +8,7 @@ import mfc.field.Complex;
 public class ComplexMatrix {
     Complex d[][];
     int dim;
+    public double eps = 1E-40;
 
     /**
      * Default Constructor erstellt Matrix mit dim=3.
@@ -43,6 +44,7 @@ public class ComplexMatrix {
         }
     }
 
+
     /**
      * Makes the Matrix symmetric
      */
@@ -52,6 +54,25 @@ public class ComplexMatrix {
                 d[j][i] = d[i][j] = d[i][j].plus( d[j][i] );
             }
         }
+    }
+
+    /**
+     * Liefert die Transformations Matrix Lp für das Kreuzprodukt von p
+     * @param p
+     */
+
+    public void createCrossOperator( ComplexVector p ) {
+        d[0][0] = new Complex(0);
+        d[1][0] = p.d[2];
+        d[2][0] = p.d[1].neg();
+
+        d[0][1] = p.d[2].neg();
+        d[1][1] = new Complex(0);
+        d[2][1] = p.d[0];
+
+        d[0][2] = p.d[1];
+        d[1][2] = p.d[0].neg();
+        d[2][2] = new Complex(0);
     }
 
     /**
@@ -170,6 +191,23 @@ public class ComplexMatrix {
         }
     }
 
+    public ComplexMatrix times( Complex lamda ) {
+        ComplexMatrix result = new ComplexMatrix(dim);
+        result.assignTimes( this, lamda );
+        return result;
+    }
+
+    /**
+     * Skalare Multiplikation mit einer Komplexen Zahl
+     */
+    public void assignTimes( ComplexMatrix A, Complex lamda ) {
+        for ( int i = 0; i < dim; i++ ) {
+            for ( int j = 0; j < dim; j++ ) {
+                d[i][j] = A.d[i][j].times( lamda );
+            }
+        }
+    }
+
 
     /**
      * Liefert die Determinante einer 3x3 Matrix nach Cramer
@@ -201,23 +239,34 @@ public class ComplexMatrix {
      * @return
      */
     public boolean isSingular() {
-        return det().equals( 0, 0 );
+        return det().isZero();
+    }
+
+
+    public void normalize() {
+        Complex sum = new Complex(0);
+        for ( int i = 0; i < dim; i++ ) {
+            for ( int j = 0; j < dim; j++ ) {
+                sum.assignPlus( d[i][j].sqr() );
+            }
+        }
+        Complex lamda = new Complex(dim*dim).divide( sum.sqrt() );
+        assignTimes(this,lamda);
     }
 
     /**
      * Addition zweier Matrizen.
      */
-    public static ComplexMatrix add( ComplexMatrix A, ComplexMatrix B ) {
+    public ComplexMatrix plus( ComplexMatrix A ) {
         ComplexMatrix C = new ComplexMatrix();
-        if ( A.dim != B.dim ) return new ComplexMatrix( A.dim ); // Fehler handling?!
+        if ( A.dim != dim ) return new ComplexMatrix( A.dim ); // Fehler handling?!
 
         for ( int i = 0; i < A.dim; i++ ) {
             for ( int j = 0; j < A.dim; j++ ) {
-                C.d[i][j] = A.d[i][j].plus( B.d[i][j] );
+                C.d[i][j] = A.d[i][j].plus( d[i][j] );
             }
         }
         return C;
     }
-
 
 }

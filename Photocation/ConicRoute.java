@@ -108,27 +108,40 @@ public class ConicRoute {
         printRoute( cConic );
     }
 
-    /*
-    public static void ConicRoute( String sFileName, GPS[] gpsPoints ) {
+    public static void sectionTest() {
+        Vector GPSV = new Vector();
 
-        p[0] = new GPS( "N52°34.26' E13°20.34' (WGS84)" );
-        p[1] = new GPS( "N52°33.93' E13°19.94' (WGS84)" );
-        p[2] = new GPS( "N52°33.66' E13°20.65' (WGS84)" );
-        p[3] = new GPS( "N52°33.85' E13°21.51' (WGS84)" );
-        p[4] = new GPS( "N52°34.21' E13°21.67' (WGS84)" );
+        GPSV.add( new GPS( 52.5527, 13.3473 ) );
+        GPSV.add( new GPS( 52.5563, 13.3868 ) );
+        GPSV.add( new GPS( 52.5628, 13.35 ) );
+        GPSV.add( new GPS( 52.5603, 13.3373 ) );
+        GPSV.add( new GPS( 52.5545, 13.34 ) );
+        Vector fivePoints = new Vector();
+        for ( int i = 0; i < 5; i++ ) {
+            GPS p = (GPS) ( GPSV.elementAt( i ) );
+            fivePoints.add( new ComplexVector( new Complex( p.lon ), new Complex( p.lat ), new Complex( 1 ) ) );
+        }
+        ComplexConic cConic = new ComplexConic( fivePoints );
 
-        makeRoute(out, p);
+        GPSV.clear();
+        GPSV.add( new GPS( 52.5527, 13.3473 ) );
+        GPSV.add( new GPS( 52.5563, 13.3568 ) );
+        GPSV.add( new GPS( 52.5628, 13.35 ) );
+        GPSV.add( new GPS( 52.5603, 13.3373 ) );
+        GPSV.add( new GPS( 52.5545, 13.34 ) );
+        fivePoints = new Vector();
+        for ( int i = 0; i < 5; i++ ) {
+            GPS p = (GPS) ( GPSV.elementAt( i ) );
+            fivePoints.add( new ComplexVector( new Complex( p.lon ), new Complex( p.lat ), new Complex( 1 ) ) );
+        }
+        ComplexConic cConic2 = new ComplexConic( fivePoints );
 
-        p[0] = new GPS( 52.5527, 13.3473 );
-        p[1] = new GPS( 52.5563, 13.3568 );
-        p[2] = new GPS( 52.5628, 13.35 );
-        p[3] = new GPS( 52.5603, 13.3373 );
-        p[4] = new GPS( 52.5545, 13.34 );
+        ComplexVector x[] = cConic.intersect( cConic2 );
+        if ( x != null )
+            for ( int i = 0 ; i < x.length ; i ++ ) {
+                System.out.println( i+":"+x[i] );
+            }
 
-        makeRoute(out, p);
-
-        System.out.println("Wrote "+sFileName+".");
     }
-    */
 
 }

@@ -172,8 +172,8 @@ public class Photocation extends java.awt.Frame {
      * @param args the command line arguments
      */
     public static void main( String args[] ) {
-//       new Photocation().show();
-       ConicRoute.sectionTest();
+       new Photocation().show();
+//       ConicRoute.sectionTest();
     }
 
     private javax.swing.JButton exitButton;

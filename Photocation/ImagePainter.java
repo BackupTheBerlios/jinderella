@@ -41,6 +41,10 @@ public class ImagePainter extends Panel implements MouseListener, ActionListener
             mi.addActionListener( this );
             popup.add( mi );
         }
+        mi = new JMenuItem( "Cancel" );
+        mi.addActionListener( this );
+        popup.add( mi );
+
         add( popup );
         setCursor( new Cursor( Cursor.CROSSHAIR_CURSOR ) );
 
