@@ -17,10 +17,12 @@ public class ComplexMatrix {
         this( 3 );
     }
 
-    public ComplexMatrix( ComplexMatrix A ) {
+    public ComplexMatrix( ComplexMatrix M ) {
+        dim = M.dim;
+        d = new Complex[dim][dim];
         for ( int i = 0; i < dim; i++ ) {
             for ( int j = 0; j < dim; j++ ) {
-                d[i][j] = new Complex( A.d[i][j] );
+                d[i][j] = new Complex( M.d[i][j] );
             }
         }
     }
@@ -32,6 +34,12 @@ public class ComplexMatrix {
     public ComplexMatrix( int dim ) {
         this.dim = dim;
         d = new Complex[dim][dim];
+        for ( int i = 0; i < dim; i++ ) {
+            for ( int j = 0; j < dim; j++ ) {
+                d[i][j] = new Complex( 0 );
+            }
+        }
+
     }
 
 
@@ -59,16 +67,6 @@ public class ComplexMatrix {
         for ( int i = 0; i < dim; i++ ) {
             for ( int j = i; j < dim; j++ ) {
                 d[j][i] = d[i][j] = d[i][j].plus( d[j][i] );
-            }
-        }
-    }
-
-
-    public void swap( int col, int row ) {
-        ComplexMatrix tmp = new ComplexMatrix(this);
-        for ( int i = 0; i < dim; i++ ) {
-            for ( int j = 0; j < dim; j++ ) {
-                d[i][i] = tmp.d[ dim - (i+col)%dim ][ dim - (j+row)%dim ];
             }
         }
     }
@@ -218,13 +216,77 @@ public class ComplexMatrix {
      * Skalare Multiplikation mit einer Komplexen Zahl
      */
     public void assignTimes( ComplexMatrix A, Complex lamda ) {
+        ComplexMatrix tmp = new ComplexMatrix(A.dim);
         for ( int i = 0; i < dim; i++ ) {
             for ( int j = 0; j < dim; j++ ) {
-                d[i][j] = A.d[i][j].times( lamda );
+                tmp.d[i][j] = A.d[i][j].times( lamda );
+            }
+        }
+        assign(tmp);
+    }
+
+    public ComplexMatrix times( ComplexMatrix A ) {
+        ComplexMatrix result = new ComplexMatrix(dim);
+        result.assignTimes( this, A );
+        return result;
+    }
+
+    public void makeRank1( ComplexMatrix l ) {
+        Complex tauh, tau;
+        tau = d[0][0].times( d[1][1] );
+        tauh = d[1][0].times( d[0][1] );
+        tauh.assignMinus( tau );
+        tauh.assignSqrt();
+        tauh.assignDivide( l.d[0][1] );
+        l = l.times( tauh );
+        assignPlus( l );
+    }
+
+    public void assignVecsFromRank1Matrix( ComplexVector v1, ComplexVector v2 ) {
+        double max = 0;
+        int maxi = 0;
+        int maxj = 0;
+        for (int i = 0; i < d.length; i++) {
+            Complex[] complexes = d[i];
+            for (int j = 0; j < complexes.length; j++) {
+                Complex complex = complexes[j];
+                if ( max <= complex.abs() ) {
+                    max = complex.abs();
+                    maxi = i;
+                    maxj = j;
+                }
+            }
+        }
+        v1.assign( d[maxi][0], d[maxi][1], d[maxi][2] );
+        v2.assign( d[0][maxj], d[1][maxj], d[2][maxj] );
+    }
+
+
+
+    /**
+     * Skalare Multiplikation mit einer Komplexen Zahl
+     */
+    public void assignTimes( ComplexMatrix A, ComplexMatrix B ) {
+        ComplexMatrix tmp = new ComplexMatrix(3);
+        for ( int i = 0; i < dim; i++ ) {
+            for ( int j = 0; j < dim; j++ ) {
+                tmp.d[i][j] = new Complex(0);
+                for ( int s = 0; s < dim; s++ ) {
+                    tmp.d[i][j].assignPlus( A.d[i][s].times( B.d[s][j] ) );
+                }
+            }
+        }
+        assign(tmp);
+    }
+
+    private void assign(ComplexMatrix tmp) {
+        for (int i = 0; i < d.length; i++) {
+            Complex[] complexes = d[i];
+            for (int j = 0; j < complexes.length; j++) {
+                d[i][j].assign(tmp.d[i][j]);
             }
         }
     }
-
 
     /**
      * Liefert die Determinante einer 3x3 Matrix nach Cramer
@@ -286,6 +348,15 @@ public class ComplexMatrix {
         return C;
     }
 
+    public void assignPlus( ComplexMatrix A ) {
+        ComplexMatrix C = new ComplexMatrix();
+        for ( int i = 0; i < A.dim; i++ ) {
+            for ( int j = 0; j < A.dim; j++ ) {
+                C.d[i][j] = A.d[i][j].plus( d[i][j] );
+            }
+        }
+        assign(C);
+    }
 
 
 }
