@@ -126,11 +126,13 @@ public class Photocation extends java.awt.Frame {
             GPSPoints.add( GPSPoint );
         }
         JFileChooser fc = new JFileChooser();
-        fc.showSaveDialog( this );
-        File selFile = fc.getSelectedFile();
-        ConicRoute cr = new ConicRoute( selFile.toString() );
-        cr.addRoute( GPSPoints );
-        cr.writeRoute();
+        int returnVal = fc.showSaveDialog( this );
+        if ( returnVal == JFileChooser.APPROVE_OPTION ) {
+            File selFile = fc.getSelectedFile();
+            ConicRoute cr = new ConicRoute( selFile.toString() );
+            cr.addRoute( GPSPoints );
+            cr.writeRoute();
+        }
     }
 
     private void openButtonActionPerformed( java.awt.event.ActionEvent evt ) {
