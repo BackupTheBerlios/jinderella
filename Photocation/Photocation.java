@@ -141,7 +141,7 @@ public class Photocation extends java.awt.Frame {
                 if ( f.isDirectory() ) {
                     return true;
                 }
-                String filename = f.getName();
+                String filename = f.getName().toLowerCase();
                 return filename.endsWith( ".jpg" );
             }
 
