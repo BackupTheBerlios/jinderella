@@ -18,7 +18,7 @@ public class ComplexVector {
      * @param z
      */
     public ComplexVector( Complex x, Complex y, Complex z ) {
-        this(3);
+        this( 3 );
         d[0] = x;
         d[1] = y;
         d[2] = z;
@@ -30,7 +30,7 @@ public class ComplexVector {
      * @param y
      */
     public ComplexVector( Complex x, Complex y ) {
-        this(2);
+        this( 2 );
         d[0] = x;
         d[1] = y;
     }
@@ -39,7 +39,7 @@ public class ComplexVector {
      * Default Constructor erstellt Vektor mit dim=3
      */
     public ComplexVector() {
-        this(3);
+        this( 3 );
     }
 
     /**

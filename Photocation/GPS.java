@@ -39,7 +39,7 @@ public class GPS {
             lon += (double) Integer.parseInt( m.group( 7 ) ) / 60;
             lon += (double) Integer.parseInt( m.group( 8 ) ) / 3600;
             if ( m.group( 5 ).equals( "W" ) ) lat *= -1;
-            System.out.println( s + " => " + lat + "," + lon );
+            // System.out.println( s + " => " + lat + "," + lon );
 
         } else {
             invalid = true;
@@ -51,7 +51,7 @@ public class GPS {
      * @param d
      * @return
      */
-    public String toSingleString( double d ) {
+    private String toSingleString( double d ) {
         double deg, min, sec;
         deg = Math.floor( d );
         min = ( d - deg ) * 60;
@@ -74,7 +74,7 @@ public class GPS {
      * @return
      */
     public String toRoutePoint( boolean start ) {
-        return "RoutePoint,D," + lat + "," + lon + ",00/00/00,00:00:00," + ( start ? "1" : "0" )+"\n";
+        return "RoutePoint,D," + lat + "," + lon + ",00/00/00,00:00:00," + ( start ? "1" : "0" ) + "\n";
     }
 
     /**

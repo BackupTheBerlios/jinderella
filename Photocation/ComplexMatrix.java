@@ -10,15 +10,15 @@ public class ComplexMatrix {
     int dim;
 
     /**
-     * Default Constructor erstellt Matrix mit dim=3
+     * Default Constructor erstellt Matrix mit dim=3.
      */
     public ComplexMatrix() {
-        this(3);
+        this( 3 );
     }
 
 
     /**
-     * Constructor
+     * Constructor.
      * @param dim
      */
     public ComplexMatrix( int dim ) {
@@ -28,7 +28,7 @@ public class ComplexMatrix {
 
 
     /**
-     * Erstellt eine ComplexMatrix aus den ComplexVector p1 * p2^T
+     * Erstellt eine ComplexMatrix aus den ComplexVector p1 * p2^T.
      * @param p1
      * @param p2
      */
@@ -49,7 +49,6 @@ public class ComplexMatrix {
     public void makeSymmetric() {
         for ( int i = 0; i < dim; i++ ) {
             for ( int j = i; j < dim; j++ ) {
-                System.out.println( i+","+j );
                 d[j][i] = d[i][j] = d[i][j].plus( d[j][i] );
             }
         }
@@ -72,7 +71,7 @@ public class ComplexMatrix {
 
 
     /**
-     * Uberlandene Stringausgabe der ComplexMatrix
+     * Uberlandene Stringausgabe der ComplexMatrix.
      */
     public String toString() {
         String out = new String( "" );
@@ -87,7 +86,7 @@ public class ComplexMatrix {
     }
 
     /**
-     * Uberlandene Stringausgabe der ComplexMatrix
+     * Uberlandene Stringausgabe der ComplexMatrix.
      */
     public String toStringEQ() {
         // ax^2+by^2+2cxy+2dx+2ey+f = 0 <=>
@@ -95,7 +94,7 @@ public class ComplexMatrix {
         //      |  a  c' d' |
         //  m = |  c' b  e' |
         //      |  d' e' f  |
-        String out = new String( "" );
+        String out = new String();
         out = d[0][0] + " x^2+  " + d[1][1] + " y^2+  ";
         out = out + "2 * " + d[0][1] + " xy+  ";
         out = out + "2 * " + d[0][2] + " x+  ";
@@ -129,8 +128,42 @@ public class ComplexMatrix {
         }
     }
 
+
     /**
-     * Addition zweier Matrizen
+     * Liefert die Determinante einer 3x3 Matrix nach Cramer
+     * dim <> 3 => fehlt :).
+     * @return
+     */
+    public Complex det() {
+        if ( dim == 3 ) {
+            return d[0][0].times( d[1][1] ).times( d[2][2] ).plus(
+                    d[0][1].times( d[1][2] ).times( d[2][0] ).plus(
+                            d[0][2].times( d[1][0] ).times( d[2][1] ).minus(
+                                    d[2][2].times( d[1][1] ).times( d[0][0] ).minus(
+                                            d[2][1].times( d[1][2] ).times( d[0][0] ).minus(
+                                                    d[2][2].times( d[1][0] ).times( d[0][1] )
+                                            )
+                                    )
+                            )
+                    )
+            );
+
+
+        } else {
+            return new Complex( 0 );
+        }
+    }
+
+    /**
+     * Liefert ein boolean ob dcie Matrix singulär ist.
+     * @return
+     */
+    public boolean isSingular() {
+        return det().equals( 0, 0 );
+    }
+
+    /**
+     * Addition zweier Matrizen.
      */
     public static ComplexMatrix add( ComplexMatrix A, ComplexMatrix B ) {
         ComplexMatrix C = new ComplexMatrix();

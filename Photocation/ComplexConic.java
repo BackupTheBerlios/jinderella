@@ -7,8 +7,8 @@ import java.util.Vector;
 import mfc.field.Complex;
 
 public class ComplexConic {
-    protected Vector fivePoints = new Vector();
-    protected ComplexMatrix conicMatrix = new ComplexMatrix();
+    private Vector fivePoints = new Vector();
+    private ComplexMatrix conicMatrix = new ComplexMatrix();
 
     /**
      * Constructor
@@ -23,7 +23,7 @@ public class ComplexConic {
     /**
      * Berechnet eine Kegelschnitt-ComplexMatrix aus 5 Punkten
      */
-    public void calcConic() {
+    private void calcConic() {
         ComplexMatrix A, B;
         ComplexVector p1 = (ComplexVector) fivePoints.elementAt( 0 );
         ComplexVector p2 = (ComplexVector) fivePoints.elementAt( 1 );
@@ -56,7 +56,6 @@ public class ComplexConic {
     }
 
 
-
     /**
      * Liefert die x Schnittpunkte der ComplexMatrix bei y zurueck
      * @param y
@@ -80,8 +79,7 @@ public class ComplexConic {
             c = conicMatrix.d[0][1].times( 2 );
             e = conicMatrix.d[0][2].times( 2 );
             d = conicMatrix.d[1][2].times( 2 );
-        }
-        else {
+        } else {
             a = conicMatrix.d[0][0];
             b = conicMatrix.d[1][1];
             f = conicMatrix.d[2][2];
@@ -109,8 +107,7 @@ public class ComplexConic {
 
         if ( dir ) {
             return new ComplexVector( y, x, new Complex( 1 ) );
-        }
-        else {
+        } else {
             return new ComplexVector( x, y, new Complex( 1 ) );
         }
 
