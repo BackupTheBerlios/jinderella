@@ -1,4 +1,6 @@
 
+import mfc.field.Complex;
+
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.io.File;
@@ -118,18 +120,33 @@ public class Photocation extends java.awt.Frame {
 
     private void generateButtonActionPerformed( java.awt.event.ActionEvent evt ) {
         Vector GPSPoints = new Vector();
+        ComplexVector mapPoints[] = new ComplexVector[5];
         for ( int i = 0; i <= 4; i++ ) {
             GPS GPSPoint = new GPS( coordinateFields[i].getText() );
             if ( GPSPoint.invalid ) return;
             GPSPoints.add( GPSPoint );
+            mapPoints[i] = new ComplexVector( new Complex( GPSPoint.lon ), new Complex( GPSPoint.lat ), new Complex(1) );
         }
+
+        double cr = ComplexConic.crossRatio( jCanvas.points[0].x,  jCanvas.points[1].x,  jCanvas.points[2].x,  jCanvas.points[3].x );
+        System.out.println("mapPoints0 = " + mapPoints[0]);
+        System.out.println("mapPoints1 = " + mapPoints[1]);
+        System.out.println("mapPoints2 = " + mapPoints[2]);
+        System.out.println("mapPoints3 = " + mapPoints[3]);
+        ComplexConic conic = new ComplexConic( mapPoints[0], mapPoints[1], mapPoints[2], mapPoints[3], cr );
+        System.out.println("conic = " + conic);
+        System.out.println("conic = " + conic.conicMatrix.toStringEQ());
+
+
+
         JFileChooser fc = new JFileChooser();
         int returnVal = fc.showSaveDialog( this );
         if ( returnVal == JFileChooser.APPROVE_OPTION ) {
             File selFile = fc.getSelectedFile();
-            ConicRoute cr = new ConicRoute( selFile.toString() );
-            cr.addRoute( GPSPoints );
-            cr.writeRoute();
+            ConicRoute croute = new ConicRoute( selFile.toString() );
+            //croute.addRoute( GPSPoints );
+            croute.printRoute( conic );
+            croute.writeRoute();
         }
     }
 

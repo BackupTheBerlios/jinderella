@@ -42,6 +42,13 @@ public class ComplexVector {
         this( 3 );
     }
 
+    public void assign( Complex x, Complex y, Complex z ) {
+        dim = 3;
+        d[0] = x;
+        d[1] = y;
+        d[2] = z;
+    }
+
     /**
      * Constructor
      * @param newdim

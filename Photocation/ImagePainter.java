@@ -28,7 +28,7 @@ public class ImagePainter extends Panel implements MouseListener, ActionListener
         int y;
     }
 
-    private Point[] points;
+    public Point[] points;
 
     public ImagePainter() {
         JMenuItem mi;

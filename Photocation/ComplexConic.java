@@ -21,6 +21,10 @@ public class ComplexConic {
         calcConic();
     }
 
+    public ComplexConic() {
+        conicMatrix = new ComplexMatrix();
+    }
+
     public ComplexConic( ComplexMatrix c ) {
         conicMatrix = c;
     }
@@ -62,7 +66,7 @@ public class ComplexConic {
 
             factors = m1.detIsZero( m2 );
 
-            // Möglichst verschiedene Faktoren nehemn
+            // Möglichst verschiedene Faktoren nehmen
             if ( factors[0].equals( factors[1] , eps ) ) {
                 factor1 = factors[1];
                 factor2 = factors[2];
@@ -103,120 +107,168 @@ public class ComplexConic {
         return conicMatrix.isSingular();
     }
 
+    public ComplexVector[] intersectLine( ComplexVector l ) {
+        ComplexVector[] result = new ComplexVector[]{ new ComplexVector(), new ComplexVector() };
+        ComplexMatrix crossOp = new ComplexMatrix();
+        crossOp.createCrossOperator(l);
+        ComplexMatrix S = new ComplexMatrix(crossOp);
+        S.transpose();
+        S.assignTimes( S, conicMatrix );
+        S.assignTimes( S, crossOp );
+        S.makeRank1( crossOp );
+        S.assignVecsFromRank1Matrix( result[0], result[1] );
+        return result;
+    }
+
+
+    public static double crossRatio( double a, double b, double c, double d ) {
+        if ( ( a - d ) * ( b -c ) == 0 ) return 0;
+        return ( a - c ) * ( b - d ) / ( ( a - d ) * ( b -c ) );
+    }
+
+    public ComplexConic( ComplexVector A, ComplexVector B,ComplexVector C, ComplexVector D, double alphaE  ) {
+        double Ax, Bx, Cx, Dx, Ay, By, Cy, Dy, Az, Bz, Cz, Dz;
+        conicMatrix = new ComplexMatrix();
+        // ax^2+by^2+2cxy+2dx+2ey+f = 0 <=>
+        //      |  a  c' d' |
+        //  m = |  c' b  e' |
+        //      |  d' e' f  |
+
+
+        Ax = A.d[0].re;
+        Ay = A.d[1].re;
+        Az = A.d[2].re;
+
+        Bx = B.d[0].re;
+        By = B.d[1].re;
+        Bz = B.d[2].re;
+
+        Cx = C.d[0].re;
+        Cy = C.d[1].re;
+        Cz = C.d[2].re;
+
+        Dx = D.d[0].re;
+        Dy = D.d[1].re;
+        Dz = D.d[2].re;
+
+
+    conicMatrix.d[2][2]= new Complex
+     (Ay*(-(Bx*Cx*Dy) -
+         By*Cx*Dx*(-1 + alphaE) +
+         Bx*Cy*Dx*alphaE) +
+      Ax*(-(Bx*Cy*Dy*
+           (-1 + alphaE)) +
+         By*
+          (-(Cy*Dx) +
+           Cx*Dy*alphaE)));
+
+     conicMatrix.d[1][2]= new Complex
+     (Az*
+       (By*Cx*Dx*(-1 + alphaE) +
+         Bx*(Cx*Dy - Cy*Dx*alphaE)
+         ) +
+      Ay*(Bz*Cx*Dx*
+          (-1 + alphaE) +
+         Bx*(Cx*Dz - Cz*Dx*alphaE)
+         ) +
+      Ax*(Bx*(Cz*Dy + Cy*Dz)*
+          (-1 + alphaE) +
+         Bz*
+          (Cy*Dx - Cx*Dy*alphaE)
+          + By*
+          (Cz*Dx - Cx*Dz*alphaE)));
+
+    conicMatrix.d[1][1] = new Complex
+    (Az*(-(Bx*Cx*Dz) -
+         Bz*Cx*Dx*(-1 + alphaE) +
+         Bx*Cz*Dx*alphaE) +
+      Ax*(-(Bx*Cz*Dz*
+           (-1 + alphaE)) +
+         Bz*
+          (-(Cz*Dx) +
+           Cx*Dz*alphaE)));
+
+
+   conicMatrix.d[0][0] = new Complex
+    (Az*(-(By*Cy*Dz) -
+         Bz*Cy*Dy*(-1 + alphaE) +
+         By*Cz*Dy*alphaE) +
+      Ay*(-(By*Cz*Dz*
+           (-1 + alphaE)) +
+         Bz*
+          (-(Cz*Dy) +
+           Cy*Dz*alphaE)));
+
+
+    conicMatrix.d[0][2] = new Complex
+    (Ay*
+          (Bz*Cx*Dy +
+            Bx*Cz*Dy +
+            By*
+            (Cz*Dx + Cx*Dz)*
+            (-1 + alphaE) -
+            Bz*Cy*Dx*alphaE -
+            Bx*Cy*Dz*alphaE) +
+         Az*
+          (Bx*Cy*Dy*
+           (-1 + alphaE) +
+            By*
+            (Cy*Dx - Cx*Dy*alphaE)
+            ) +
+         Ax*
+          (Bz*Cy*Dy*
+           (-1 + alphaE) +
+            By*
+            (Cy*Dz - Cz*Dy*alphaE)
+            ));
+
+      conicMatrix.d[0][1] = new Complex
+      (Az*
+          (By*Cx*Dz +
+            Bx*Cy*Dz +
+            Bz*
+            (Cy*Dx + Cx*Dy)*
+            (-1 + alphaE) -
+            By*Cz*Dx*alphaE -
+            Bx*Cz*Dy*alphaE) +
+         Ay*
+          (Bx*Cz*Dz*
+           (-1 + alphaE) +
+            Bz*
+            (Cz*Dx - Cx*Dz*alphaE)
+            ) +
+         Ax*
+          (By*Cz*Dz*
+           (-1 + alphaE) +
+            Bz*
+            (Cz*Dy - Cy*Dz*alphaE)
+            ));
+
+        conicMatrix.makeSymmetric();
+
+    }
+
+
+
+
     public ComplexVector[] extractLines() {
         // ax^2 + by^2 + cxy + dx + ey + f = 0
         //      |  a  c' d' |
         //  m = |  c' b  e' |
         //      |  d' e' f  |
         if ( ! isDegenrated() ) return null;
-        ComplexVector[] result = new ComplexVector[2];
-        Complex a,b,c,d,e,f;
-        a = conicMatrix.d[0][0];
-        b = conicMatrix.d[1][1];
-        f = conicMatrix.d[2][2];
-        c = conicMatrix.d[0][1].times( 2 );
-        d = conicMatrix.d[0][2].times( 2 );
-        e = conicMatrix.d[1][2].times( 2 );
-
-        Complex xx = a;
-        Complex xy = c;
-        Complex xz = d;
-        Complex yy = b;
-        Complex yz = e;
-        Complex zz = f;
-
-
-        // Berechnung der bestimmenden Geraden
-        // -----------------------------------
-        if ( a.isZero() && b.isZero() && f.isZero() ) {
-
-            // Kurve degeneriert mit der Form A*x*y + B*y + C*x = 0  ->  (r1*x+q1) * (r2*y+q2)
-            Complex A = c;
-            Complex B = e;
-            Complex C = d;
-
-            if ( B.isZero() ) {
-                // Kurve: A*x*y + C*x = 0 => x*(A*y + C)
-                result[0] = new ComplexVector( new Complex(1), new Complex(0), new Complex(0) );
-                result[1] = new ComplexVector( new Complex(0), A, C );
-            } else {
-                // Kurve: A*x*y + B*y = 0 => y*(A*x + B)
-                result[0] = new ComplexVector( A, new Complex(0), B );
-                result[1] = new ComplexVector( new Complex(0), new Complex(1), new Complex(0) );
-            }
-            return result;
-        }
-
-        // Suche Ansatzpunkt auf der Diagonale
-        int iSpalte = 0;
-        if ( !a.isZero() )
-            iSpalte = 0;
-        else if ( !b.isZero() )
-            iSpalte = 1;
-        else
-            iSpalte = 2;
-
-        ComplexMatrix N;
-        N = new ComplexMatrix( conicMatrix );
-
-        if ( iSpalte == 0 ) {
-            // Matrix ist in Ordnung
-
-        } else if ( iSpalte == 1 ) {
-            // Vertausche x und y in N
-            N.swap(1,1);
-        } else if ( iSpalte == 2 ) {
-            // Vertausche x und z in N
-            N.swap(2,2);
-        }
-        N.makeSymmetric();
-
-
-        N= N.times( new Complex(1).divide(a) );
-        // Bilde Gleichungsform x^2 + A*xy + B*x + C*y^2 + D*y + E (beachte evtl. obige Vertauschungen)
-        //      |  a  c' d' |
-        //  m = |  c' b  e' |
-        //      |  d' e' f  |
-        Complex A = c;
-        Complex B = d;
-        Complex C = b;
-        Complex D = e;
-        Complex E = f;
-
-        Complex DetA = A.sqr().divide( new Complex(4) ).minus( C );
-        Complex DetB = B.sqr().divide( new Complex(4) ).minus( E );
-
-
-        Complex q1, r1;         // Erste  Gerade der Form x + q1*y + r1
-        Complex q2, r2;         // Zweite Gerade der Form x + q2*y + r1
-
-        // 2-Möglichkeiten, je nach Wert der Determinante unter der Wurzel
-        if ( !DetA.isZero() ) {
-            // Nur ein Wert interessiert
-            q1 = A.divide( new Complex(2) ).plus( DetA.sqrt() );
-            q2 = A.minus( q1 );
-
-            r1 = D.minus( B.times(q1) ).divide( q1.minus(q2) ).neg();
-            r2 = B.times( q2 ).minus( D ).divide( q1.minus(q2) ).neg();
-        } else {
-            // Nur ein Wert interessiert
-            r1 = B.divide( new Complex(2) ).plus( DetB.sqrt() );
-            r2 = B.minus( r1 );
-
-            q1 = D.minus( A.times(r1) ).divide( r1.minus(r2) ).neg();
-            q2 = A.times( r2 ).minus( D ).divide( r1.minus(r2) ).neg();
-        }
-
-        if ( iSpalte == 0 ) {
-            result[0] = new ComplexVector( new Complex(1), q1, r1 );
-            result[1] = new ComplexVector( new Complex(1), q2, r2 );
-        } else if ( iSpalte == 1 ) {
-            result[0] = new ComplexVector( q1, new Complex(1), r1 );
-            result[1] = new ComplexVector( q2, new Complex(1), r2 );
-        } else {
-            result[0] = new ComplexVector( r1, q1, new Complex(1) );
-            result[1] = new ComplexVector( r2, q2, new Complex(1) );
-        }
+        ComplexVector[] result = new ComplexVector[]{ new ComplexVector(), new ComplexVector() };
+        ComplexVector cross1 = new ComplexVector();
+        ComplexVector cross2 = new ComplexVector();
+        ComplexVector cross = new ComplexVector();
+        ComplexMatrix crossMatrix = new ComplexMatrix();
+        cross1 = new ComplexVector( conicMatrix.d[0][1], conicMatrix.d[1][1], conicMatrix.d[2][1] );
+        cross2 = new ComplexVector( conicMatrix.d[0][0], conicMatrix.d[1][0], conicMatrix.d[2][0] );
+        cross = cross1.cross( cross2 );
+        crossMatrix.createCrossOperator( cross );
+        ComplexMatrix rank1 = new ComplexMatrix( conicMatrix );
+        rank1.makeRank1( crossMatrix );
+        rank1.assignVecsFromRank1Matrix( result[0], result[1] );
         return result;
     }
 

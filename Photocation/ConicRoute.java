@@ -20,7 +20,7 @@ public class ConicRoute {
      * Gibt einen Kegelschnitt als WayPoint+ Route aus
      * @param cConic
      */
-    private void printRoute( ComplexConic cConic ) {
+    public void printRoute( ComplexConic cConic ) {
         // Eckpunkge von berliner-stadtplan.com Karte
         //GPS ul = new GPS( 52.57, 13.33 );
         //GPS lr = new GPS( 52.55, 13.36 );
@@ -97,6 +97,7 @@ public class ConicRoute {
         }
     }
 
+
     public void addRoute( Vector GPSPoints ) {
         if ( GPSPoints.size() != 5 ) return;
         Vector fivePoints = new Vector();
@@ -107,6 +108,10 @@ public class ConicRoute {
         ComplexConic cConic = new ComplexConic( fivePoints );
         printRoute( cConic );
     }
+
+
+
+
 
     public static void sectionTest() {
         Vector GPSV = new Vector();
@@ -121,7 +126,31 @@ public class ConicRoute {
             GPS p = (GPS) ( GPSV.elementAt( i ) );
             fivePoints.add( new ComplexVector( new Complex( p.lon ), new Complex( p.lat ), new Complex( 1 ) ) );
         }
+
+        /*
+        fivePoints.clear();
+        fivePoints.add( new ComplexVector( new Complex( -2 ), new Complex( 4 ), new Complex( 1 ) ) );
+        fivePoints.add( new ComplexVector( new Complex( -1 ), new Complex( 1 ), new Complex( 1 ) ) );
+        fivePoints.add( new ComplexVector( new Complex( 0 ), new Complex( 0 ), new Complex( 1 ) ) );
+        fivePoints.add( new ComplexVector( new Complex( 1 ), new Complex( 1 ), new Complex( 1 ) ) );
+        fivePoints.add( new ComplexVector( new Complex( 2 ), new Complex( 4 ), new Complex( 1 ) ) );
+        */
+
         ComplexConic cConic = new ComplexConic( fivePoints );
+//        ComplexVector v3 = new ComplexVector(  new Complex(0), new Complex(1), new Complex(-9)  );
+
+        ComplexVector v1 = new ComplexVector(  new Complex(13.3373), new Complex(52.5603), new Complex(1)  );
+        ComplexVector v2 = new ComplexVector(  new Complex(13.34), new Complex(52.5545), new Complex(1)  );
+        ComplexVector v3 = v1.cross( v2 );
+
+        System.out.println( cConic );
+
+        ComplexVector[] v4 = cConic.intersectLine( v3 );
+        for (int i = 0; i < v4.length; i++) {
+            System.out.println( v4[i].toCanvas() );
+        }
+
+
 
         GPSV.clear();
         GPSV.add( new GPS( 52.5527, 13.3473 ) );
@@ -141,7 +170,6 @@ public class ConicRoute {
             for ( int i = 0 ; i < x.length ; i ++ ) {
                 System.out.println( i+":"+x[i].toCanvas() );
             }
-
     }
 
 }
