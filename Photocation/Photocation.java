@@ -121,11 +121,10 @@ public class Photocation extends java.awt.Frame {
     private void generateButtonActionPerformed( java.awt.event.ActionEvent evt ) {
         Vector GPSPoints = new Vector();
         for ( int i = 0; i <= 4; i++ ) {
-            GPS GPSPoint = new GPS( descrFields[i].toString() );
+            GPS GPSPoint = new GPS( coordinateFields[i].getText() );
             if ( GPSPoint.invalid ) return;
             GPSPoints.add( GPSPoint );
         }
-
         JFileChooser fc = new JFileChooser();
         fc.showSaveDialog( this );
         File selFile = fc.getSelectedFile();
